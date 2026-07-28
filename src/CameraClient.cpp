@@ -13,12 +13,14 @@ void kill_auto_mount() {
 }
 
 // FUNC PUBLIC MEMBER
-CameraClient::CameraClient(CameraAbilities& abilities, GPPortInfo& portInfo) : m_context(gp_context_new()) {
+CameraClient::CameraClient(CameraAbilities& abilities, GPPortInfo& portInfo, std::string cam_name) : m_context(gp_context_new()) {
   Camera *raw_cam = nullptr;
   gp_camera_new(&raw_cam);
   gp_camera_set_abilities(raw_cam,abilities);
   gp_camera_set_port_info(raw_cam, portInfo);
   m_camera.reset(raw_cam);
+
+  camera_name = cam_name;
 
 }
 
@@ -67,7 +69,7 @@ bool CameraClient::capturePhoto(std::string SaveImagePath) {
     // 5.Download
     std::cout << "Downloading Image ..." << std::endl;
 
-    // Init Camera File Raw pointer
+    // Init Camera_File Raw pointer
     CameraFile *raw_file = nullptr;
     gp_file_new(&raw_file);
     std::unique_ptr<CameraFile, FileDeleter> file(raw_file);
@@ -81,6 +83,9 @@ bool CameraClient::capturePhoto(std::string SaveImagePath) {
 
     gp_file_save(file.get(), SaveImagePath.c_str());
     std::cout << "Success! saved to " << SaveImagePath << std::endl;
+
+    //Increase Photo count
+    m_photo_count++;
   
     return true;
 
@@ -88,6 +93,8 @@ bool CameraClient::capturePhoto(std::string SaveImagePath) {
     std::cerr << "Exception caught: " << e.what() << std::endl;
     return false;
   }
-}
+};
+
+
 
 

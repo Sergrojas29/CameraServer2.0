@@ -17,6 +17,9 @@ pkg_check_modules(CUPS REQUIRED IMPORTED_TARGET cups)
 find_package(OpenCV REQUIRED)
 find_package(Threads REQUIRED)
 
+find_package(OpenMP REQUIRED)
+find_package(TBB REQUIRED)
+
 include(FetchContent)
 
 # 1. Fetch Crow (Consider pinning a specific tag instead of master)
@@ -49,6 +52,7 @@ FetchContent_MakeAvailable(cpr)
 add_executable(camera_server 
     src/main.cpp
     src/CameraClient.cpp
+    src/CameraManager.cpp
 )
 
 # 5. Include Paths
@@ -66,4 +70,6 @@ target_link_libraries(camera_server PRIVATE
     Crow::Crow 
     cpr::cpr 
     nlohmann_json::nlohmann_json
+    OpenMP::OpenMP_CXX
+    TBB::tbb
 )
